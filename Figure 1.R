@@ -53,7 +53,11 @@ ggplot(map.world, aes(x = long, y = lat, group = group)) +
 
 # 1. IS.AIR.PSGR Air transport, passengers carried (https://data.worldbank.org/indicator/IS.AIR.PSGR)
 df.air <- read.csv(here("API_IS.AIR.PSGR_DS2_en_csv_v2_1993658.csv"), skip = 4)
-# 2 
+# 2. SP.URB.TOTL Urban population (https://data.worldbank.org/indicator/SP.URB.TOTL)
+df.urb <- read.csv(here("API_SP.URB.TOTL_DS2_en_csv_v2_1929299.csv"), skip = 4)
+# 3. NE.EXP.GNFS.CD Exports of goods and services (current US$) (https://data.worldbank.org/indicator/NE.EXP.GNFS.CD)
+df.exp <- read.csv(here("API_NE.EXP.GNFS.CD_DS2_en_csv_v2_1928255.csv"), skip = 4)
+
 
 
 ### Cleaning World Bank data, keeping data for regions only: WLD, EAS, ECS, MEA, SSF, LCN, NAC
@@ -63,6 +67,14 @@ df.air <- df.air %>% select(-c(Indicator.Name, X)) %>%
 air.col.names <- c("Country", "Code", "Indicator", 1960:2020)
 names(df.air) <- air.col.names
 df.air <- df.air %>% melt(id = c("Country", "Code", "Indicator"))
+
+df.urb <- df.urb %>% select(-c(Indicator.Name, X)) %>% 
+  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
+urb.col.names <- c("Country", "Code", "Indicator", 1960:2020)
+names(df.urb) <- urb.col.names
+df.urb <- df.urb %>% melt(id = c("Country", "Code", "Indicator"))
+
+
 
 
 
