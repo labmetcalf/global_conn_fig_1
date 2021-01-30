@@ -6,6 +6,9 @@
 library(tidyverse)
 library(here)
 library(reshape2)
+library(gridExtra)
+library(scales)
+library(directlabels)
 
 ######################################################################################
 ### Figure 1A: Map with historical epidemics ###
@@ -62,25 +65,6 @@ df.exp <- read.csv(here("API_NE.EXP.GNFS.CD_DS2_en_csv_v2_1928255.csv"), skip = 
 
 ### Cleaning World Bank data, keeping data for regions only: WLD, EAS, ECS, MEA, SSF, LCN, NAC
 
-df.air <- df.air %>% select(-c(Indicator.Name, X)) %>% 
-  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
-air.col.names <- c("Country", "Code", "Indicator", 1960:2020)
-names(df.air) <- air.col.names
-df.air <- df.air %>% melt(id = c("Country", "Code", "Indicator"))
-
-df.urb <- df.urb %>% select(-c(Indicator.Name, X)) %>% 
-  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
-urb.col.names <- c("Country", "Code", "Indicator", 1960:2020)
-names(df.urb) <- urb.col.names
-df.urb <- df.urb %>% melt(id = c("Country", "Code", "Indicator"))
-
-
-
-
-
-
-#Grab, clean worldbank data
-# Show world above then split by region? 3 rows x 2 columns
 # WLD World
 
 # EAS East Asia & Pacific
@@ -89,8 +73,67 @@ df.urb <- df.urb %>% melt(id = c("Country", "Code", "Indicator"))
 # SSF Sub-Saharan Africa
 # LCN Latin America & Caribbean
 # NAC North America
+df.air <- df.air %>% select(-c(Indicator.Name, X)) %>% 
+  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
+new.col.names <- c("region", "code", "indicator", 1960:2020)
+names(df.air) <- new.col.names
+df.air <- df.air %>% melt(id = c("region", "code", "indicator"))
 
-# Plot as % increase since 1970?
+df.urb <- df.urb %>% select(-c(Indicator.Name, X)) %>% 
+  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
+names(df.urb) <- new.col.names
+df.urb <- df.urb %>% melt(id = c("region", "code", "indicator"))
+
+df.exp <- df.exp %>% select(-c(Indicator.Name, X)) %>% 
+  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
+names(df.exp) <- new.col.names
+df.exp <- df.exp %>% melt(id = c("region", "code", "indicator"))
+
+### Binding 3 variables together and prepping for plotting
+df3 <- rbind(df.air, df.urb, df.exp) %>% 
+  # Renaming columns
+  rename(year = variable) %>% 
+  # Converting year into a numerical value
+  mutate(year = as.numeric(as.character(year))) %>%
+  # Deleting data from before 1970 and for 2020 (incomplete data)
+  filter(year > 1969) %>% filter(year != 2020) %>%
+  #Deleting rows without data
+  drop_na() %>%
+  # Calculating yearly values as a % increase from 1970 or first year with data
+  group_by(indicator, region) %>% mutate(perc_inc = value/min(value)*100-100) %>% ungroup()
+  
+### Plotting
+p1A <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code == "WLD") %>%
+  mutate(value = value/1e9) %>%
+  ggplot(aes(x = year, y = value)) +
+  geom_line(colour = "#a1887f", size = 1) +
+  ylab("Air travel passengers (billions)") +
+  theme(panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),
+        legend.position = "none")
+p1A
+
+p1B <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code != "WLD") %>%
+  mutate(value = value/1e9) %>%
+  ggplot(aes(x = year, y = value)) +
+  geom_line(aes(group = region, colour = region), size = 1) +
+  ylab("Air travel passengers (billions)") +
+  scale_x_continuous(limits = c(1970, 2035)) +
+  geom_dl(aes(label = region, colour = region), method = list(dl.trans(x = x + .2), "last.points", cex = 0.5)) +
+  theme(panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(), axis.title.y = element_blank(),
+        legend.position = "none")
+p1B
+
+
+p1B <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code != "WLD") %>% 
+  ggplot(aes(x = year, y = value, group = region)) +
+  geom_line(aes(colour = region))
+
+grid.arrange(p1A, p1B, nrow = 1)
+
 
 
 
