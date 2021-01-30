@@ -34,7 +34,7 @@ map.world <- map_data('world') %>% filter(region != "Antarctica")
 
 # Plotting map
 ggplot(map.world, aes(x = long, y = lat, group = group)) +
-  geom_polygon(fill="#d7ccc8", colour = "white", size = 0.04) +
+  geom_polygon(fill="#efebe9", colour = "white", size = 0.2) +
   coord_fixed(1.3) +
   theme(panel.background = element_blank(),
         axis.title = element_blank(),
@@ -104,6 +104,10 @@ df3 <- rbind(df.air, df.urb, df.exp) %>%
   
 ### Plotting
 
+# Color palette
+region_color_pal <- c("#440154FF", "#ab47bc", "#2A788EFF", "#616161", "#7AD151FF", "#ffab00")
+
+
 ### Airtravel ### ### ### ### ### 
 p1A <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code == "WLD") %>%
   mutate(value = value/1e9) %>%
@@ -122,7 +126,8 @@ p1B <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code != "WLD") %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
   scale_x_continuous(limits = c(1970, 2025)) +
-  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  scale_color_manual(values = region_color_pal) +
+  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), 'last.bumpup', "last.points", cex = 0.7)) +
   theme(panel.background = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(), axis.title.y = element_blank(),
@@ -147,7 +152,8 @@ p2B <- df3 %>% filter(indicator == "NE.EXP.GNFS.CD") %>% filter(code != "WLD") %
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
   scale_x_continuous(limits = c(1970, 2025)) +
-  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  scale_color_manual(values = region_color_pal) +
+  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), 'last.bumpup', "last.points", cex = 0.7)) +
   theme(panel.background = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(), axis.title.y = element_blank(),
@@ -172,11 +178,14 @@ p3B <- df3 %>% filter(indicator == "SP.URB.TOTL") %>% filter(code != "WLD") %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
   scale_x_continuous(limits = c(1970, 2025)) +
-  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  scale_color_manual(values = region_color_pal) +
+  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), 'last.bumpup', "last.points", cex = 0.7)) +
   theme(panel.background = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(), axis.title.y = element_blank(),
         legend.position = "none")
+
+
 
 
 grid.arrange(p1A, p1B, p2A, p2B, p3A, p3B, nrow = 3)
