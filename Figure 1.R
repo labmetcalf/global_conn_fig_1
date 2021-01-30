@@ -63,7 +63,7 @@ df.exp <- read.csv(here("API_NE.EXP.GNFS.CD_DS2_en_csv_v2_1928255.csv"), skip = 
 
 
 
-### Cleaning World Bank data, keeping data for regions only: WLD, EAS, ECS, MEA, SSF, LCN, NAC
+### Cleaning World Bank data, keeping data for regions: WLD, EAS, ECS, MEA, SSF, LCN, NAC
 
 # WLD World
 
@@ -103,36 +103,83 @@ df3 <- rbind(df.air, df.urb, df.exp) %>%
   group_by(indicator, region) %>% mutate(perc_inc = value/min(value)*100-100) %>% ungroup()
   
 ### Plotting
+
+### Airtravel ### ### ### ### ### 
 p1A <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code == "WLD") %>%
   mutate(value = value/1e9) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(colour = "#a1887f", size = 1) +
-  ylab("Air travel passengers (billions)") +
+  ylab("Air travel passengers\n(billions)") +
+  scale_x_continuous(limits = c(1970, 2025)) +
+  geom_dl(aes(label = code), colour = "#a1887f", method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
   theme(panel.background = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(),
         legend.position = "none")
-p1A
 
 p1B <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code != "WLD") %>%
   mutate(value = value/1e9) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
-  ylab("Air travel passengers (billions)") +
-  scale_x_continuous(limits = c(1970, 2035)) +
-  geom_dl(aes(label = region, colour = region), method = list(dl.trans(x = x + .2), "last.points", cex = 0.5)) +
+  scale_x_continuous(limits = c(1970, 2025)) +
+  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
   theme(panel.background = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(), axis.title.y = element_blank(),
         legend.position = "none")
-p1B
+
+### Exports ### ### ### ### ### 
+
+p2A <- df3 %>% filter(indicator == "NE.EXP.GNFS.CD") %>% filter(code == "WLD") %>%
+  mutate(value = value/1e12) %>%
+  ggplot(aes(x = year, y = value)) +
+  geom_line(colour = "#a1887f", size = 1) +
+  ylab("Exports of goods and services\n(trillion current US$)") +
+  scale_x_continuous(limits = c(1970, 2025)) +
+  geom_dl(aes(label = code), colour = "#a1887f", method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  theme(panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),
+        legend.position = "none")
+
+p2B <- df3 %>% filter(indicator == "NE.EXP.GNFS.CD") %>% filter(code != "WLD") %>%
+  mutate(value = value/1e12) %>%
+  ggplot(aes(x = year, y = value)) +
+  geom_line(aes(group = region, colour = region), size = 1) +
+  scale_x_continuous(limits = c(1970, 2025)) +
+  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  theme(panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(), axis.title.y = element_blank(),
+        legend.position = "none")
+
+### Urbanization ### ### ### ### ### 
+
+p3A <- df3 %>% filter(indicator == "SP.URB.TOTL") %>% filter(code == "WLD") %>%
+  mutate(value = value/1e9) %>%
+  ggplot(aes(x = year, y = value)) +
+  geom_line(colour = "#a1887f", size = 1) +
+  ylab("Urban population\n(billions)") +
+  scale_x_continuous(limits = c(1970, 2025)) +
+  geom_dl(aes(label = code), colour = "#a1887f", method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  theme(panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),
+        legend.position = "none")
+
+p3B <- df3 %>% filter(indicator == "SP.URB.TOTL") %>% filter(code != "WLD") %>%
+  mutate(value = value/1e9) %>%
+  ggplot(aes(x = year, y = value)) +
+  geom_line(aes(group = region, colour = region), size = 1) +
+  scale_x_continuous(limits = c(1970, 2025)) +
+  geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
+  theme(panel.background = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(), axis.title.y = element_blank(),
+        legend.position = "none")
 
 
-p1B <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code != "WLD") %>% 
-  ggplot(aes(x = year, y = value, group = region)) +
-  geom_line(aes(colour = region))
-
-grid.arrange(p1A, p1B, nrow = 1)
+grid.arrange(p1A, p1B, p2A, p2B, p3A, p3B, nrow = 3)
 
 
 
