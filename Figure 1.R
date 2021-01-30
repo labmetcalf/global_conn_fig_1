@@ -5,6 +5,7 @@
 
 library(tidyverse)
 library(here)
+library(reshape2)
 
 ######################################################################################
 ### Figure 1A: Map with historical epidemics ###
@@ -48,8 +49,20 @@ ggplot(map.world, aes(x = long, y = lat, group = group)) +
 
 # 'more frequent transport of people and goods between larger, denser population centers'
 
-# Reading in World Bank data
+### Reading in World Bank data
+
 # 1. IS.AIR.PSGR Air transport, passengers carried (https://data.worldbank.org/indicator/IS.AIR.PSGR)
+df.air <- read.csv(here("API_IS.AIR.PSGR_DS2_en_csv_v2_1993658.csv"), skip = 4)
+# 2 
+
+
+### Cleaning World Bank data, keeping data for regions only: WLD, EAS, ECS, MEA, SSF, LCN, NAC
+
+df.air <- df.air %>% select(-c(Indicator.Name, X)) %>% 
+  filter(Country.Code %in% c("WLD", "EAS", "ECS", "MEA", "SSF", "LCN", "NAC"))
+air.col.names <- c("Country", "Code", "Indicator", 1960:2020)
+names(df.air) <- air.col.names
+df.air <- df.air %>% melt(id = c("Country", "Code", "Indicator"))
 
 
 
