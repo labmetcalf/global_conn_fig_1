@@ -48,6 +48,12 @@ ggplot(map.world, aes(x = long, y = lat, group = group)) +
 
 # 'more frequent transport of people and goods between larger, denser population centers'
 
+# Reading in World Bank data
+# 1. IS.AIR.PSGR Air transport, passengers carried (https://data.worldbank.org/indicator/IS.AIR.PSGR)
+
+
+
+
 #Grab, clean worldbank data
 # Show world above then split by region? 3 rows x 2 columns
 # WLD World
@@ -59,7 +65,7 @@ ggplot(map.world, aes(x = long, y = lat, group = group)) +
 # LCN Latin America & Caribbean
 # NAC North America
 
-
+# Plot as % increase since 1970?
 
 
 
