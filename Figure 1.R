@@ -113,6 +113,7 @@ p1A <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code == "WLD") %>%
   mutate(value = value/1e9) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(colour = "#a1887f", size = 1) +
+  geom_vline(xintercept = 2000, linetype="dashed", color = "gray", size=0.65) +
   ylab("Air travel passengers\n(billions)") +
   scale_x_continuous(limits = c(1970, 2025)) +
   geom_dl(aes(label = code), colour = "#a1887f", method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
@@ -125,6 +126,7 @@ p1B <- df3 %>% filter(indicator == "IS.AIR.PSGR") %>% filter(code != "WLD") %>%
   mutate(value = value/1e9) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
+  geom_vline(xintercept = 2000, linetype="dashed", color = "gray", size=0.65) +
   scale_x_continuous(limits = c(1970, 2025)) +
   scale_color_manual(values = region_color_pal) +
   geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), 'last.bumpup', "last.points", cex = 0.7)) +
@@ -139,6 +141,7 @@ p2A <- df3 %>% filter(indicator == "NE.EXP.GNFS.CD") %>% filter(code == "WLD") %
   mutate(value = value/1e12) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(colour = "#a1887f", size = 1) +
+  geom_vline(xintercept = 2000, linetype="dashed", color = "gray", size=0.65) +
   ylab("Exports of goods and services\n(trillion current US$)") +
   scale_x_continuous(limits = c(1970, 2025)) +
   geom_dl(aes(label = code), colour = "#a1887f", method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
@@ -151,6 +154,7 @@ p2B <- df3 %>% filter(indicator == "NE.EXP.GNFS.CD") %>% filter(code != "WLD") %
   mutate(value = value/1e12) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
+  geom_vline(xintercept = 2000, linetype="dashed", color = "gray", size=0.65) +
   scale_x_continuous(limits = c(1970, 2025)) +
   scale_color_manual(values = region_color_pal) +
   geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), 'last.bumpup', "last.points", cex = 0.7)) +
@@ -165,6 +169,7 @@ p3A <- df3 %>% filter(indicator == "SP.URB.TOTL") %>% filter(code == "WLD") %>%
   mutate(value = value/1e9) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(colour = "#a1887f", size = 1) +
+  geom_vline(xintercept = 2000, linetype="dashed", color = "gray", size=0.65) +
   ylab("Urban population\n(billions)") +
   scale_x_continuous(limits = c(1970, 2025)) +
   geom_dl(aes(label = code), colour = "#a1887f", method = list(dl.trans(x = x + .1), "last.points", cex = 0.7)) +
@@ -177,6 +182,7 @@ p3B <- df3 %>% filter(indicator == "SP.URB.TOTL") %>% filter(code != "WLD") %>%
   mutate(value = value/1e9) %>%
   ggplot(aes(x = year, y = value)) +
   geom_line(aes(group = region, colour = region), size = 1) +
+  geom_vline(xintercept = 2000, linetype="dashed", color = "gray", size=0.65) +
   scale_x_continuous(limits = c(1970, 2025)) +
   scale_color_manual(values = region_color_pal) +
   geom_dl(aes(label = code, colour = region), method = list(dl.trans(x = x + .1), 'last.bumpup', "last.points", cex = 0.7)) +
