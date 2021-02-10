@@ -186,8 +186,6 @@ p3B <- df3 %>% filter(indicator == "SP.URB.TOTL") %>% filter(code != "WLD") %>%
         legend.position = "none")
 
 
-
-
 grid.arrange(p1A, p1B, p2A, p2B, p3A, p3B, nrow = 3)
 
 
